@@ -1,0 +1,15 @@
+Assumptions and Choices for schema:
+
+    IDs: Introduced surrogate primary keys (IDs) for simplicity and to ensure uniqueness.
+    Redundancy and Nulls: Avoided redundancy and nulls where possible.
+    Foreign Keys: Included to maintain referential integrity.
+    Date and Time Constraints: Ensured sessions cannot start and end at the same time in the same studio.
+    Participation: Created a separate table for session participation to handle many-to-many relationships.
+    Track and Album Associations: Separated into distinct tables to handle many-to-many relationships.
+    Engineer Certification: Stored as a text field without strict type constraints for flexibility.
+
+Constraints Not Enforced:
+
+    Multiple Recording Engineers: The schema allows assigning multiple engineers to a session but doesn't enforce a limit of 3.
+    Session Fees: Not computable from the schema, as requested.
+    Manager History: While current managers are tracked, historical data isn't captured in this schema.
