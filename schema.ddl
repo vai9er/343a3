@@ -1,7 +1,7 @@
 -- Drop existing schema and create a new one
 DROP SCHEMA IF EXISTS recording CASCADE;
 CREATE SCHEMA recording;
-SET search_path TO recording;
+SET SEARCH_PATH TO recording;
 
 -- Studio Table
 -- Represents a recording studio with a unique ID, name, address, and a manager.
@@ -9,8 +9,8 @@ CREATE TABLE Studio (
     studio_id SERIAL PRIMARY KEY,
     name VARCHAR(255) NOT NULL,
     address TEXT NOT NULL,
-    manager_id INTEGER,
-    FOREIGN KEY (manager_id) REFERENCES Person(person_id) ON UPDATE CASCADE
+    manager_id INTEGER
+    -- FOREIGN KEY (manager_id) REFERENCES Person(person_id) ON UPDATE CASCADE
     -- Assumption: A studio has only one current manager. Historical manager data is not tracked.
 );
 
@@ -26,20 +26,46 @@ CREATE TABLE Person (
     -- Assumption: 'certification' field stores multiple certifications as a single text, not structured data.
 );
 
+-- Manages Table
+-- Represent a manager's start time at a given studio
+CREATE TABLE MANAGES (
+    manager_id INTEGER,
+    studio_id INTEGER, 
+    start_time TIMESTAMP NOT NULL,
+    FOREIGN KEY (manager_id) REFERENCES Person(person_id) ON DELETE SET NULL,
+    FOREIGN KEY (studio_id) REFERENCES Studio(studio_id) ON DELETE CASCADE
+);
+
 -- Session Table
 -- Represents a recording session with a unique ID, associated studio, engineer, start and end times, and a session fee.
 CREATE TABLE Session (
     session_id SERIAL PRIMARY KEY,
     studio_id INTEGER NOT NULL,
-    engineer_id INTEGER,
     session_start TIMESTAMP NOT NULL,
     session_end TIMESTAMP NOT NULL,
     session_fee FLOAT NOT NULL,
+    engineer_1 INTEGER NOT NULL,
+    engineer_2 INTEGER,
+    engineer_3 INTEGER,
+    FOREIGN KEY (engineer_1) REFERENCES Person(person_id) ON DELETE CASCADE,
+    FOREIGN KEY (engineer_2) REFERENCES Person(person_id) ON DELETE SET NULL,
+    FOREIGN KEY (engineer_3) REFERENCES Person(person_id) ON DELETE SET NULL,
     FOREIGN KEY (studio_id) REFERENCES Studio(studio_id) ON DELETE CASCADE,
-    FOREIGN KEY (engineer_id) REFERENCES Person(person_id) ON DELETE SET NULL,
     UNIQUE (studio_id, session_start)
     -- Constraint: Sessions in the same studio cannot start at the same time.
 );
+
+-- Engineer Session Table
+-- Represents an engineer was present for a recording session
+/*
+CREATE Table EngineerSessionAssociation (
+    engineer_id INTEGER NOT NULL,
+    session_id INTEGER NOT NULL,
+    FOREIGN KEY (session_id) REFERENCES Session(session_id) ON DELETE CASCADE,
+    FOREIGN KEY (engineer_id) REFERENCES Person(person_id) ON DELETE SET NULL,
+    UNIQUE (engineer_id, session_id)
+);
+*/
 
 -- Band Table
 -- Represents a musical band with a unique ID and name.
@@ -75,7 +101,7 @@ CREATE TABLE RecordingSegment (
     segment_id SERIAL PRIMARY KEY,
     session_id INTEGER NOT NULL,
     length_seconds INT NOT NULL,
-    format VARCHAR(50) NOT NULL,
+    format1 VARCHAR(50) NOT NULL,
     FOREIGN KEY (session_id) REFERENCES Session(session_id) ON DELETE CASCADE
 );
 
