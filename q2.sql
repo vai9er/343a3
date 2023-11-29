@@ -42,7 +42,7 @@ from Session;
 
 Create VIEW EngineerParticipation AS
 Select 
-    person_id, count(person_id)
+    person_id, count(person_id) as num
 from Engineer_id
 where person_id is not null
 group by (person_id);
@@ -68,9 +68,14 @@ from ManagerSession
 group by manager_id;
 
 Create VIEW Coallated AS
-(Select * from PlayerParticipation) 
-UNION ALL (Select * from EngineerParticipation)
-UNION ALL (Select * from ManagerSession);
+select person_id, num from
+PlayerParticipation 
+UNION ALL
+select person_id, num from
+ManagerParticipation
+UNION ALL
+select person_id, num from
+EngineerParticipation;
 
 Create VIEW Coallated_nums AS
 Select person_id, sum(num) as num
@@ -87,11 +92,12 @@ Where not EXISTS (
 );
 
 Create View Answer AS
-Select * from Coallated_nums
+Select person_id, num from Coallated_nums
 UNION ALL
-Select * from non_participants;
+Select person_id, num from non_participants;
 
 -- Your query that answers the question goes below the "insert into" line:
 INSERT INTO q2(person_id, num)
 select person_id, num
-from Answer;
+from Answer
+Order by num desc;

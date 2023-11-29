@@ -28,7 +28,7 @@ JOIN SegmentTrackAssociation STA
 on TAA.track_id = STA.track_id;
 
 CREATE VIEW AlbumSession AS
-Select name, album_id, session_id
+Select distinct name, album_id, session_id
 from SegmentTrackAlbum
 JOIN RecordingSegment
 on SegmentTrackAlbum.segment_id = RecordingSegment.segment_id;
@@ -44,7 +44,7 @@ Order by num desc
 limit 1;
 
 CREATE VIEW album_player AS
-Select count_segment.album_id, person_id
+Select distinct count_segment.album_id, person_id
 from AlbumSession 
 join Participation
 on AlbumSession.session_id = Participation.session_id

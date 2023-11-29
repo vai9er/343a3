@@ -3,6 +3,7 @@ SET search_path TO recording;
 DROP TABLE IF EXISTS q1 CASCADE;
 
 CREATE TABLE q1 (
+    studio_id INTEGER NOT NULL,
 	manager_id INTEGER NOT NULL,
 	name VARCHAR(255) NOT NULL,
     num INTEGER NOT NULL
@@ -12,8 +13,7 @@ CREATE TABLE q1 (
 -- (But give them better names!) The IF EXISTS avoids generating an error
 -- the first time this file is imported.
 DROP VIEW IF EXISTS StudioManager CASCADE;
-DROP VIEW IF EXISTS SegmentAlbum CASCADE;
-DROP VIEW IF EXISTS SessionSegmentStudio CASCADE;
+DROP VIEW IF EXISTS StudioSessionAlbum CASCADE;
 DROP VIEW IF EXISTS num_albums CASCADE;
 DROP VIEW IF EXISTS Answer CASCADE;
 
@@ -23,30 +23,27 @@ Select Studio.studio_id, Studio.manager_id, person.name
 from Studio join Person 
 on Studio.manager_id = Person.person_id;
 
-CREATE VIEW SegmentAlbum AS
-Select a.album_id, s.segment_id
-from TrackAlbumAssociation a
-join SegmentTrackAssociation s
-on a.track_id=s.segment_id;
+CREATE VIEW StudioSessionAlbum AS
+Select distinct Session.studio_id, TrackAlbumAssociation.album_id
+from 
+    TrackAlbumAssociation Join SegmentTrackAssociation
+    on SegmentTrackAssociation.track_id=TrackAlbumAssociation.track_id
+    JOIN RecordingSegment 
+    on RecordingSegment.segment_id = SegmentTrackAssociation.segment_id
+    JOIN Session
+    on RecordingSegment.session_id = Session.session_id;
 
-CREATE VIEW SessionSegmentStudio AS
-Select s.studio_id, r.segment_id, r.session_id
-from RecordingSegment r
-join Session s
-on r.session_id = s.session_id;
-
-CREATE VIEW num_albums AS
-Select SessionSegmentStudio.studio_id, count(SegmentAlbum.album_id) as num
-from SegmentAlbum join SessionSegmentStudio
-on SegmentAlbum.segment_id = SessionSegmentStudio.segment_id
-group by SessionSegmentStudio.studio_id;
+Create VIEW num_albums AS
+Select studio_id, count(studio_id) as num
+from StudioSessionAlbum
+group by studio_id;
 
 Create View Answer AS
-Select manager_id, name, num
-from StudioManager join num_albums
+Select StudioManager.studio_id, manager_id, name, COALESCE(num, 0) as num
+from StudioManager left join num_albums
 on StudioManager.studio_id = num_albums.studio_id;
 
 -- Your query that answers the question goes below the "insert into" line:
-INSERT INTO q1(manager_id, name, num)
-select manager_id, name, num
+INSERT INTO q1(studio_id, manager_id, name, num)
+select studio_id, manager_id, name, num
 from Answer;

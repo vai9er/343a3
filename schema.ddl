@@ -31,7 +31,7 @@ CREATE TABLE Person (
 CREATE TABLE MANAGES (
     manager_id INTEGER,
     studio_id INTEGER, 
-    start_time TIMESTAMP NOT NULL,
+    start_time DATE NOT NULL,
     FOREIGN KEY (manager_id) REFERENCES Person(person_id) ON DELETE SET NULL,
     FOREIGN KEY (studio_id) REFERENCES Studio(studio_id) ON DELETE CASCADE
 );

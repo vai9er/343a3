@@ -1,0 +1,192 @@
+-------------------- Loading schema and data: --------------------
+
+psql:schema.ddl:2: NOTICE:  drop cascades to 34 other objects
+DETAIL:  drop cascades to table studio
+drop cascades to table person
+drop cascades to table manages
+drop cascades to table session
+drop cascades to table band
+drop cascades to table bandmember
+drop cascades to table participation
+drop cascades to table recordingsegment
+drop cascades to table track
+drop cascades to table album
+drop cascades to table trackalbumassociation
+drop cascades to table segmenttrackassociation
+drop cascades to table q1
+drop cascades to view studiomanager
+drop cascades to view studiosessionalbum
+drop cascades to view num_albums
+drop cascades to table q2
+drop cascades to view playerparticipation
+drop cascades to view engineer_id
+drop cascades to view engineerparticipation
+drop cascades to view managersession
+drop cascades to view managerparticipation
+drop cascades to view coallated
+drop cascades to view coallated_nums
+drop cascades to view non_participants
+drop cascades to table q3
+drop cascades to view sessionsum
+drop cascades to view players
+drop cascades to table q4
+drop cascades to view segmenttrackalbum
+drop cascades to view albumsession
+drop cascades to view count_segment
+drop cascades to view album_player
+drop cascades to view answer
+DROP SCHEMA
+CREATE SCHEMA
+SET
+CREATE TABLE
+CREATE TABLE
+CREATE TABLE
+CREATE TABLE
+CREATE TABLE
+CREATE TABLE
+CREATE TABLE
+CREATE TABLE
+CREATE TABLE
+CREATE TABLE
+CREATE TABLE
+CREATE TABLE
+SET
+INSERT 0 3
+INSERT 0 3
+INSERT 0 3
+INSERT 0 3
+INSERT 0 2
+INSERT 0 3
+INSERT 0 3
+INSERT 0 3
+INSERT 0 2
+INSERT 0 2
+INSERT 0 4
+INSERT 0 3
+
+-------------------- Query 1: -----------------------------------
+
+SET
+psql:q1.sql:3: NOTICE:  table "q1" does not exist, skipping
+DROP TABLE
+CREATE TABLE
+psql:q1.sql:15: NOTICE:  view "studiomanager" does not exist, skipping
+DROP VIEW
+psql:q1.sql:16: NOTICE:  view "studiosessionalbum" does not exist, skipping
+DROP VIEW
+psql:q1.sql:17: NOTICE:  view "num_albums" does not exist, skipping
+DROP VIEW
+psql:q1.sql:18: NOTICE:  view "answer" does not exist, skipping
+DROP VIEW
+CREATE VIEW
+CREATE VIEW
+CREATE VIEW
+CREATE VIEW
+INSERT 0 3
+
+select * from q1;
+ studio_id | manager_id |     name     | num 
+-----------+------------+--------------+-----
+         1 |       1233 | Donna Meagle |   1
+         2 |       1233 | Donna Meagle |   0
+         3 |       1232 | Leslie Knope |   1
+(3 rows)
+
+-------------------- Query 2: -----------------------------------
+
+SET
+psql:q2.sql:3: NOTICE:  table "q2" does not exist, skipping
+DROP TABLE
+CREATE TABLE
+psql:q2.sql:13: NOTICE:  view "playerparticipation" does not exist, skipping
+DROP VIEW
+psql:q2.sql:14: NOTICE:  view "engineer_id" does not exist, skipping
+DROP VIEW
+psql:q2.sql:15: NOTICE:  view "engineerparticipation" does not exist, skipping
+DROP VIEW
+psql:q2.sql:16: NOTICE:  view "managersession" does not exist, skipping
+DROP VIEW
+psql:q2.sql:17: NOTICE:  view "managerparticipation" does not exist, skipping
+DROP VIEW
+psql:q2.sql:18: NOTICE:  view "coallated" does not exist, skipping
+DROP VIEW
+psql:q2.sql:19: NOTICE:  view "coallated_nums" does not exist, skipping
+DROP VIEW
+psql:q2.sql:20: NOTICE:  view "non_participants" does not exist, skipping
+DROP VIEW
+DROP VIEW
+CREATE VIEW
+CREATE VIEW
+CREATE VIEW
+CREATE VIEW
+CREATE VIEW
+CREATE VIEW
+CREATE VIEW
+CREATE VIEW
+CREATE VIEW
+INSERT 0 3
+
+select * from q2;
+ person_id | num 
+-----------+-----
+      6754 |   8
+      5678 |   7
+      1233 |   6
+      7832 |   5
+      4523 |   5
+      2224 |   5
+      9942 |   3
+      1000 |   3
+      1232 |   2
+      1234 |   1
+      6521 |   1
+      1231 |   0
+(12 rows)
+
+-------------------- Query 3: -----------------------------------
+
+SET
+psql:q3.sql:3: NOTICE:  table "q3" does not exist, skipping
+DROP TABLE
+CREATE TABLE
+psql:q3.sql:14: NOTICE:  view "sessionsum" does not exist, skipping
+DROP VIEW
+psql:q3.sql:15: NOTICE:  view "players" does not exist, skipping
+DROP VIEW
+CREATE VIEW
+CREATE VIEW
+INSERT 0 1
+
+select * from q3;
+ session_id | person_id |    name    
+------------+-----------+------------
+          7 |      6754 | Andy Dwyer
+(1 row)
+
+-------------------- Query 4: -----------------------------------
+
+SET
+psql:q4.sql:3: NOTICE:  table "q4" does not exist, skipping
+DROP TABLE
+CREATE TABLE
+psql:q4.sql:15: NOTICE:  view "segmenttrackalbum" does not exist, skipping
+DROP VIEW
+psql:q4.sql:16: NOTICE:  view "albumsession" does not exist, skipping
+DROP VIEW
+psql:q4.sql:17: NOTICE:  view "count_segment" does not exist, skipping
+DROP VIEW
+psql:q4.sql:18: NOTICE:  view "album_player" does not exist, skipping
+DROP VIEW
+DROP VIEW
+CREATE VIEW
+CREATE VIEW
+CREATE VIEW
+CREATE VIEW
+CREATE VIEW
+INSERT 0 1
+
+select * from q4;
+ album_id |       name        | num_sessions | num_people 
+----------+-------------------+--------------+------------
+        1 | The Awesome Album |            4 |          6
+(1 row)
