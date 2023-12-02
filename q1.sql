@@ -9,15 +9,11 @@ CREATE TABLE q1 (
     num INTEGER NOT NULL
 );
 
--- Do this for each of the views that define your intermediate steps.
--- (But give them better names!) The IF EXISTS avoids generating an error
--- the first time this file is imported.
 DROP VIEW IF EXISTS StudioManager CASCADE;
 DROP VIEW IF EXISTS StudioSessionAlbum CASCADE;
 DROP VIEW IF EXISTS num_albums CASCADE;
 DROP VIEW IF EXISTS Answer CASCADE;
 
--- Define views for your intermediate steps here:
 CREATE VIEW StudioManager AS 
 Select Studio.studio_id, Studio.manager_id, person.name
 from Studio join Person 
@@ -43,7 +39,6 @@ Select StudioManager.studio_id, manager_id, name, COALESCE(num, 0) as num
 from StudioManager left join num_albums
 on StudioManager.studio_id = num_albums.studio_id;
 
--- Your query that answers the question goes below the "insert into" line:
 INSERT INTO q1(studio_id, manager_id, name, num)
 select studio_id, manager_id, name, num
 from Answer;

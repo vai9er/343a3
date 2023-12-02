@@ -11,7 +11,8 @@ CREATE TABLE Studio (
     address TEXT NOT NULL,
     manager_id INTEGER
     -- FOREIGN KEY (manager_id) REFERENCES Person(person_id) ON UPDATE CASCADE
-    -- Assumption: A studio has only one current manager. Historical manager data is not tracked.
+    -- Assumption: A studio has only one current manager. 
+    -- Historical manager data is kept in the MANAGES Table
 );
 
 -- Person Table
@@ -27,17 +28,19 @@ CREATE TABLE Person (
 );
 
 -- Manages Table
--- Represent a manager's start time at a given studio
+-- Represent a the manager history of a studio with a Studio_id, manager_id, and manager's start time
 CREATE TABLE MANAGES (
-    manager_id INTEGER,
-    studio_id INTEGER, 
+    manager_id INTEGER NOT NULL,
+    studio_id INTEGER NOT NULL, 
     start_time DATE NOT NULL,
     FOREIGN KEY (manager_id) REFERENCES Person(person_id) ON DELETE SET NULL,
     FOREIGN KEY (studio_id) REFERENCES Studio(studio_id) ON DELETE CASCADE
 );
 
 -- Session Table
--- Represents a recording session with a unique ID, associated studio, engineer, start and end times, and a session fee.
+-- Represents a recording session with a unique ID, associated studio, start and end times, and a session fee.
+-- Also Includes at least 1 engineer's person_id and at most three in engineer_1,2,3
+-- Assumes Engineer 1 2 & 3 are different if 2 or 3 are not null
 CREATE TABLE Session (
     session_id SERIAL PRIMARY KEY,
     studio_id INTEGER NOT NULL,
@@ -54,18 +57,6 @@ CREATE TABLE Session (
     UNIQUE (studio_id, session_start)
     -- Constraint: Sessions in the same studio cannot start at the same time.
 );
-
--- Engineer Session Table
--- Represents an engineer was present for a recording session
-/*
-CREATE Table EngineerSessionAssociation (
-    engineer_id INTEGER NOT NULL,
-    session_id INTEGER NOT NULL,
-    FOREIGN KEY (session_id) REFERENCES Session(session_id) ON DELETE CASCADE,
-    FOREIGN KEY (engineer_id) REFERENCES Person(person_id) ON DELETE SET NULL,
-    UNIQUE (engineer_id, session_id)
-);
-*/
 
 -- Band Table
 -- Represents a musical band with a unique ID and name.

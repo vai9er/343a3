@@ -1,4 +1,3 @@
--- You must not change the next 2 lines or the table definition.
 SET search_path TO recording;
 DROP TABLE IF EXISTS q4 CASCADE;
 
@@ -9,16 +8,12 @@ CREATE TABLE q4 (
     num_people INTEGER NOT NULL
 );
 
--- Do this for each of the views that define your intermediate steps.
--- (But give them better names!) The IF EXISTS avoids generating an error
--- the first time this file is imported.
 DROP VIEW IF EXISTS SegmentTrackAlbum CASCADE;
 DROP VIEW IF EXISTS AlbumSession CASCADE;
 DROP VIEW IF EXISTS count_segment CASCADE;
 DROP VIEW IF EXISTS album_player CASCADE;
 DROP VIEW IF EXISTS Answer CASCADE;
 
--- Define views for your intermediate steps here:
 CREATE VIEW SegmentTrackAlbum AS
 Select A.name, A.album_id, STA.track_id, STA.segment_id
 from Album A
@@ -62,7 +57,6 @@ JOIN album_player
 on count_segment.album_id = album_player.album_id
 group by (count_segment.name, album_player.album_id, count_segment.num);
 
--- Your query that answers the question goes below the "insert into" line:
 INSERT INTO q4(album_id, name, num_sessions, num_people)
 select album_id, name, num_sessions, num_people
 from Answer;
