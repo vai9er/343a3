@@ -1,22 +1,22 @@
--- Drop existing schema and create a new one
 DROP SCHEMA IF EXISTS recording CASCADE;
 CREATE SCHEMA recording;
 SET SEARCH_PATH TO recording;
 
 -- Studio Table
--- Represents a recording studio with a unique ID, name, address, and a manager.
+-- Stores the studio_id, studio name, studio address, and current manager of every studio
 CREATE TABLE Studio (
     studio_id SERIAL PRIMARY KEY,
     name VARCHAR(255) NOT NULL,
     address TEXT NOT NULL,
     manager_id INTEGER
     -- FOREIGN KEY (manager_id) REFERENCES Person(person_id) ON UPDATE CASCADE
-    -- Assumption: A studio has only one current manager. 
-    -- Historical manager data is kept in the MANAGES Table
+    -- Assumption: manager_id is updated to the current manager whenever it changes
+    -- Historical manager data is kept in the Manages Table
 );
 
 -- Person Table
--- Represents an individual with a unique ID, name, email, phone number, and optional engineer certification.
+-- Stores the person_id, name, email, phone number, certification, and
+-- if they're an egineer of every person in the databse
 CREATE TABLE Person (
     person_id SERIAL PRIMARY KEY,
     name VARCHAR(255) NOT NULL,
@@ -24,12 +24,18 @@ CREATE TABLE Person (
     phone_number VARCHAR(20) NOT NULL,
     is_engineer BOOLEAN NOT NULL DEFAULT FALSE,
     certification TEXT
-    -- Assumption: 'certification' field stores multiple certifications as a single text, not structured data.
+    -- Assumption: 'certification' field stores multiple certifications as a 
+    -- single text, not structured data.
 );
 
 -- Manages Table
--- Represent a the manager history of a studio with a Studio_id, manager_id, and manager's start time
-CREATE TABLE MANAGES (
+-- Represent a the manager history of a studio with a studio_id, 
+-- manager_id, and manager's start time
+-- manager_id references person_id in TABLE Person
+-- studio_id references studio_id in TABLE Studio
+-- Assumption: when adding to Manages table, manager_id 
+-- and studio_id are present in the db
+CREATE TABLE Manages (
     manager_id INTEGER NOT NULL,
     studio_id INTEGER NOT NULL, 
     start_time DATE NOT NULL,
@@ -38,8 +44,9 @@ CREATE TABLE MANAGES (
 );
 
 -- Session Table
--- Represents a recording session with a unique ID, associated studio, start and end times, and a session fee.
--- Also Includes at least 1 engineer's person_id and at most three in engineer_1,2,3
+-- Represents a recording session with a unique ID, associated studio, 
+-- start and end times, and a session fee.
+-- Also Includes at least 1 engineer and at most three in engineer_1,2,3
 -- Assumes Engineer 1 2 & 3 are different if 2 or 3 are not null
 CREATE TABLE Session (
     session_id SERIAL PRIMARY KEY,
@@ -63,7 +70,6 @@ CREATE TABLE Session (
 CREATE TABLE Band (
     band_id SERIAL PRIMARY KEY,
     name VARCHAR(255) NOT NULL
-    -- Assumption: A band's name is its unique identifier.
 );
 
 -- BandMember Table
@@ -87,7 +93,8 @@ CREATE TABLE Participation (
 );
 
 -- RecordingSegment Table
--- Represents a segment of sound recording with a unique ID, length, and format.
+-- Represents a segment of sound recording with a unique ID, 
+-- session_id, length, and format.
 CREATE TABLE RecordingSegment (
     segment_id SERIAL PRIMARY KEY,
     session_id INTEGER NOT NULL,
@@ -122,11 +129,14 @@ CREATE TABLE TrackAlbumAssociation (
 );
 
 -- SegmentTrackAssociation Table
--- Represents the many-to-many relationship between RecordingSegments and Tracks.
+-- Represents the many-to-many relationship between RecordingSegments and Tracks
 CREATE TABLE SegmentTrackAssociation (
     segment_id INTEGER NOT NULL,
     track_id INTEGER NOT NULL,
-    PRIMARY KEY (segment_id, track_id),
-    FOREIGN KEY (segment_id) REFERENCES RecordingSegment(segment_id) ON DELETE CASCADE,
-    FOREIGN KEY (track_id) REFERENCES Track(track_id) ON DELETE CASCADE
+    PRIMARY KEY 
+        (segment_id, track_id),
+    FOREIGN KEY (segment_id) 
+        REFERENCES RecordingSegment(segment_id) ON DELETE CASCADE,
+    FOREIGN KEY (track_id) 
+        REFERENCES Track(track_id) ON DELETE CASCADE
 );

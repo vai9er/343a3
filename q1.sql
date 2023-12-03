@@ -1,4 +1,3 @@
--- You must not change the next 2 lines or the table definition.
 SET search_path TO recording;
 DROP TABLE IF EXISTS q1 CASCADE;
 
